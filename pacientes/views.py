@@ -3,9 +3,12 @@ from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render, redirect, get_object_or_404
 from openpyxl.workbook import Workbook
+from rest_framework import viewsets, permissions
 
 from pacientes.forms import PacienteFormulario
-from pacientes.models import Paciente
+from pacientes.models import Paciente, Especialidad, Doctor
+from pacientes.serializers import PacienteSerializer, EspecialidadSerializer, DoctorSerializer
+
 
 # Create your views here.
 
@@ -84,6 +87,36 @@ def generar_reporte(request, *args, **kwargs):
     response["Content-Disposition"] = contenido
     wb.save(response)
     return response
+
+
+
+class PacienteViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Paciente.objects.all().order_by('-apellido')
+    serializer_class = PacienteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+
+class EspecialidadViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Especialidad.objects.all()
+    serializer_class = EspecialidadSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class DoctorViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
 
 
 
